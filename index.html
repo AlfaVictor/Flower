@@ -8,7 +8,7 @@
         body {
             margin: 0;
             min-height: 100vh;
-            background-color: #2e2e2e; /* dull neutral background */
+            background-color: #2e2e2e; /* Neutral start */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -16,6 +16,12 @@
             color: white;
             text-align: center;
             padding: 20px;
+            overflow: hidden;
+            transition: background 1.5s ease;
+        }
+
+        .romantic-bg {
+            background: linear-gradient(to bottom, #1a0026, #400040);
         }
 
         .container {
@@ -24,6 +30,7 @@
             align-items: center;
             width: 100%;
             max-width: 500px;
+            z-index: 2;
         }
 
         input {
@@ -51,17 +58,41 @@
             background-color: #666;
         }
 
+        .reveal-btn {
+            background-color: #ff66b2;
+        }
+
+        .reveal-btn:hover {
+            background-color: #ff3385;
+        }
+
         .message {
-            margin-top: 20px;
+            margin-top: 25px;
             font-size: 20px;
             line-height: 1.6;
-            min-height: 80px;
+            min-height: 90px;
         }
 
         .rose {
             margin-top: 30px;
             display: none;
             width: 180px;
+        }
+
+        /* Petals */
+        .petal {
+            position: absolute;
+            top: -50px;
+            font-size: 18px;
+            animation: fall linear forwards;
+            pointer-events: none;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(360deg);
+                opacity: 0;
+            }
         }
     </style>
 </head>
@@ -75,11 +106,10 @@
 </div>
 
 <div class="container" id="mainContent" style="display:none;">
-    <button id="revealBtn" onclick="revealLove()">Click to reveal</button>
+    <button id="revealBtn" class="reveal-btn" onclick="revealLove()">Click to reveal</button>
 
-    <!-- External blooming rose GIF -->
     <img class="rose" id="rose"
-         src="https://media.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
+         src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif"
          alt="Blooming Rose">
 
     <div class="message" id="message"></div>
@@ -92,24 +122,28 @@
     function checkPassword() {
         const input = document.getElementById("passwordInput").value;
         if (input.toLowerCase() === correctPassword.toLowerCase()) {
+
+            // Switch background
+            document.body.classList.add("romantic-bg");
+
             document.getElementById("passwordScreen").style.display = "none";
             document.getElementById("mainContent").style.display = "flex";
+
         } else {
             alert("Incorrect password");
         }
     }
 
     function revealLove() {
-        if (revealed) return; // limit to one click
+        if (revealed) return;
         revealed = true;
 
-        const btn = document.getElementById("revealBtn");
-        btn.style.display = "none";
+        document.getElementById("revealBtn").style.display = "none";
 
         const rose = document.getElementById("rose");
         rose.style.display = "block";
 
-        const text = "Vas, talking to you is the highlight of my day. You make everything feel lighter and calmer.";
+        const text = "Vas talking to you is the cutest part of my day. Heres a little virtual rose for you so that you do not feel too low. Best of luck for applying to jobs :).";
         const messageBox = document.getElementById("message");
 
         let i = 0;
@@ -123,6 +157,21 @@
         }
 
         typeWriter();
+        startPetals();
+    }
+
+    function startPetals() {
+        setInterval(createPetal, 700);
+    }
+
+    function createPetal() {
+        const petal = document.createElement("div");
+        petal.classList.add("petal");
+        petal.innerHTML = "🌸";
+        petal.style.left = Math.random() * window.innerWidth + "px";
+        petal.style.animationDuration = (4 + Math.random() * 3) + "s";
+        document.body.appendChild(petal);
+        setTimeout(() => petal.remove(), 7000);
     }
 </script>
 
