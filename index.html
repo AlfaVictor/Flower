@@ -2,9 +2,50 @@
 <html>
 <head>
     <title>For You ❤️</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background: linear-gradient(to bottom, #1a001a, #330033);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .rose {
+            font-size: 100px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 26px;
+            opacity: 0;
+            animation: fadeIn 3s forwards;
+            animation-delay: 2s;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Hello ❤️</h1>
+    <div class="rose">🌹</div>
+    <div class="message">
+        You make my world more beautiful every single day ❤️
+    </div>
 </body>
 </html>
