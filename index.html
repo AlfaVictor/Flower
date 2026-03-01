@@ -1,21 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>For You ❤️</title>
+    <title>For You</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
         body {
             margin: 0;
             min-height: 100vh;
-            background: linear-gradient(to bottom, #1a0026, #400040);
+            background-color: #2e2e2e; /* dull neutral background */
             display: flex;
             justify-content: center;
             align-items: center;
             font-family: -apple-system, BlinkMacSystemFont, sans-serif;
             color: white;
             text-align: center;
-            overflow: hidden;
             padding: 20px;
         }
 
@@ -29,7 +28,7 @@
 
         input {
             padding: 12px;
-            border-radius: 10px;
+            border-radius: 6px;
             border: none;
             margin-bottom: 12px;
             font-size: 16px;
@@ -40,73 +39,29 @@
 
         button {
             padding: 12px 24px;
-            border-radius: 20px;
+            border-radius: 6px;
             border: none;
-            background-color: #ff66b2;
+            background-color: #444;
             color: white;
             cursor: pointer;
             font-size: 16px;
-            transition: 0.3s ease;
         }
 
         button:hover {
-            background-color: #ff3385;
+            background-color: #666;
         }
 
         .message {
-            margin-top: 25px;
+            margin-top: 20px;
             font-size: 20px;
             line-height: 1.6;
             min-height: 80px;
         }
 
-        /* Elegant SVG Rose */
-        .rose-svg {
+        .rose {
             margin-top: 30px;
-            width: 150px;
-            stroke: #ff4d88;
-            stroke-width: 2;
-            fill: none;
-            opacity: 0;
-        }
-
-        .draw {
-            opacity: 1;
-        }
-
-        path {
-            stroke-dasharray: 600;
-            stroke-dashoffset: 600;
-            animation: draw 3s ease forwards;
-        }
-
-        @keyframes draw {
-            to {
-                stroke-dashoffset: 0;
-            }
-        }
-
-        /* Petals */
-        .petal {
-            position: absolute;
-            top: -50px;
-            font-size: 18px;
-            animation: fall linear forwards;
-            pointer-events: none;
-        }
-
-        @keyframes fall {
-            to {
-                transform: translateY(110vh) rotate(360deg);
-                opacity: 0;
-            }
-        }
-
-        .music-toggle {
-            margin-top: 10px;
-            font-size: 14px;
-            opacity: 0.8;
-            cursor: pointer;
+            display: none;
+            width: 180px;
         }
     </style>
 </head>
@@ -114,35 +69,25 @@
 <body>
 
 <div class="container" id="passwordScreen">
-    <h2>Enter the secret 💖</h2>
+    <h2>Please enter password to enter</h2>
     <input type="password" id="passwordInput" placeholder="Password">
-    <button onclick="checkPassword()">Unlock</button>
+    <button onclick="checkPassword()">Enter</button>
 </div>
 
 <div class="container" id="mainContent" style="display:none;">
-    <button id="revealBtn" onclick="revealLove()">Click Me 🌹</button>
+    <button id="revealBtn" onclick="revealLove()">Click to reveal</button>
 
-    <svg class="rose-svg" id="rose" viewBox="0 0 200 200">
-        <path d="M100 40
-                 C130 20, 160 50, 100 110
-                 C40 50, 70 20, 100 40Z
-                 M100 110
-                 C90 140, 80 160, 100 180
-                 C120 160, 110 140, 100 110Z" />
-    </svg>
+    <!-- External blooming rose GIF -->
+    <img class="rose" id="rose"
+         src="https://media.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
+         alt="Blooming Rose">
 
     <div class="message" id="message"></div>
-    <div class="music-toggle" onclick="toggleMusic()">🎵 Music On/Off</div>
 </div>
-
-<audio id="bgMusic" loop>
-    <source src="https://assets.mixkit.co/music/preview/mixkit-sweet-romantic-ambient-252.mp3" type="audio/mpeg">
-</audio>
 
 <script>
     const correctPassword = "Vasvi";
-    let typing = false;
-    let musicStarted = false;
+    let revealed = false;
 
     function checkPassword() {
         const input = document.getElementById("passwordInput").value;
@@ -150,26 +95,24 @@
             document.getElementById("passwordScreen").style.display = "none";
             document.getElementById("mainContent").style.display = "flex";
         } else {
-            alert("Wrong password 😢");
+            alert("Incorrect password");
         }
     }
 
     function revealLove() {
-        if (typing) return; // Prevent multiple clicks
-        typing = true;
+        if (revealed) return; // limit to one click
+        revealed = true;
 
-        startMusic();
-
-        document.getElementById("revealBtn").disabled = true;
+        const btn = document.getElementById("revealBtn");
+        btn.style.display = "none";
 
         const rose = document.getElementById("rose");
-        rose.classList.add("draw");
+        rose.style.display = "block";
 
-        const text = "Vas, talking to you is the highlight of my day. You make everything softer, brighter, and happier. 💕";
+        const text = "Vas, talking to you is the highlight of my day. You make everything feel lighter and calmer.";
         const messageBox = document.getElementById("message");
 
         let i = 0;
-        messageBox.innerHTML = "";
 
         function typeWriter() {
             if (i < text.length) {
@@ -180,38 +123,6 @@
         }
 
         typeWriter();
-        startPetals();
-    }
-
-    function startPetals() {
-        setInterval(createPetal, 700);
-    }
-
-    function createPetal() {
-        const petal = document.createElement("div");
-        petal.classList.add("petal");
-        petal.innerHTML = "🌸";
-        petal.style.left = Math.random() * window.innerWidth + "px";
-        petal.style.animationDuration = (4 + Math.random() * 3) + "s";
-        document.body.appendChild(petal);
-        setTimeout(() => petal.remove(), 7000);
-    }
-
-    function startMusic() {
-        if (musicStarted) return;
-        const music = document.getElementById("bgMusic");
-        music.volume = 0.4;
-        music.play().catch(() => {});
-        musicStarted = true;
-    }
-
-    function toggleMusic() {
-        const music = document.getElementById("bgMusic");
-        if (music.paused) {
-            music.play();
-        } else {
-            music.pause();
-        }
     }
 </script>
 
