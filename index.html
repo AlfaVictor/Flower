@@ -25,7 +25,6 @@
             align-items: center;
             width: 100%;
             max-width: 500px;
-            z-index: 2;
         }
 
         input {
@@ -54,29 +53,40 @@
             background-color: #ff3385;
         }
 
-        .rose {
-            font-size: 70px;
-            opacity: 0;
-            transform: scale(0);
-        }
-
-        .bloom {
-            animation: bloom 1.5s ease forwards;
-        }
-
-        @keyframes bloom {
-            0% { transform: scale(0); opacity: 0; }
-            60% { transform: scale(1.3); opacity: 1; }
-            100% { transform: scale(1); }
-        }
-
         .message {
-            margin-top: 20px;
+            margin-top: 25px;
             font-size: 20px;
             line-height: 1.6;
             min-height: 80px;
         }
 
+        /* Elegant SVG Rose */
+        .rose-svg {
+            margin-top: 30px;
+            width: 150px;
+            stroke: #ff4d88;
+            stroke-width: 2;
+            fill: none;
+            opacity: 0;
+        }
+
+        .draw {
+            opacity: 1;
+        }
+
+        path {
+            stroke-dasharray: 600;
+            stroke-dashoffset: 600;
+            animation: draw 3s ease forwards;
+        }
+
+        @keyframes draw {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        /* Petals */
         .petal {
             position: absolute;
             top: -50px;
@@ -92,10 +102,11 @@
             }
         }
 
-        .music-indicator {
+        .music-toggle {
             margin-top: 10px;
             font-size: 14px;
-            opacity: 0.7;
+            opacity: 0.8;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -109,19 +120,29 @@
 </div>
 
 <div class="container" id="mainContent" style="display:none;">
-    <button onclick="revealLove()">Click Me 🌹</button>
-    <div class="rose" id="topRose">🌹</div>
+    <button id="revealBtn" onclick="revealLove()">Click Me 🌹</button>
+
+    <svg class="rose-svg" id="rose" viewBox="0 0 200 200">
+        <path d="M100 40
+                 C130 20, 160 50, 100 110
+                 C40 50, 70 20, 100 40Z
+                 M100 110
+                 C90 140, 80 160, 100 180
+                 C120 160, 110 140, 100 110Z" />
+    </svg>
+
     <div class="message" id="message"></div>
-    <div class="rose" id="bottomRose">🌹</div>
-    <div class="music-indicator" id="musicText"></div>
+    <div class="music-toggle" onclick="toggleMusic()">🎵 Music On/Off</div>
 </div>
 
 <audio id="bgMusic" loop>
-    <source src="https://cdn.pixabay.com/download/audio/2022/10/30/audio_c8c8a73467.mp3?filename=romantic-jazz-124008.mp3" type="audio/mpeg">
+    <source src="https://assets.mixkit.co/music/preview/mixkit-sweet-romantic-ambient-252.mp3" type="audio/mpeg">
 </audio>
 
 <script>
     const correctPassword = "Vasvi";
+    let typing = false;
+    let musicStarted = false;
 
     function checkPassword() {
         const input = document.getElementById("passwordInput").value;
@@ -134,26 +155,27 @@
     }
 
     function revealLove() {
+        if (typing) return; // Prevent multiple clicks
+        typing = true;
+
         startMusic();
 
-        const topRose = document.getElementById("topRose");
-        const bottomRose = document.getElementById("bottomRose");
+        document.getElementById("revealBtn").disabled = true;
 
-        topRose.classList.add("bloom");
+        const rose = document.getElementById("rose");
+        rose.classList.add("draw");
 
-        const text = "Vas, talking to you is the cutest part of my day. You make everything brighter and softer and happier. 💕";
-        let i = 0;
-        const speed = 40;
+        const text = "Vas, talking to you is the highlight of my day. You make everything softer, brighter, and happier. 💕";
         const messageBox = document.getElementById("message");
+
+        let i = 0;
         messageBox.innerHTML = "";
 
         function typeWriter() {
             if (i < text.length) {
                 messageBox.innerHTML += text.charAt(i);
                 i++;
-                setTimeout(typeWriter, speed);
-            } else {
-                bottomRose.classList.add("bloom");
+                setTimeout(typeWriter, 40);
             }
         }
 
@@ -162,34 +184,34 @@
     }
 
     function startPetals() {
-        setInterval(createPetal, 600);
+        setInterval(createPetal, 700);
     }
 
     function createPetal() {
         const petal = document.createElement("div");
         petal.classList.add("petal");
         petal.innerHTML = "🌸";
-
         petal.style.left = Math.random() * window.innerWidth + "px";
         petal.style.animationDuration = (4 + Math.random() * 3) + "s";
-
         document.body.appendChild(petal);
-
-        setTimeout(() => {
-            petal.remove();
-        }, 7000);
+        setTimeout(() => petal.remove(), 7000);
     }
 
     function startMusic() {
+        if (musicStarted) return;
         const music = document.getElementById("bgMusic");
-        const musicText = document.getElementById("musicText");
+        music.volume = 0.4;
+        music.play().catch(() => {});
+        musicStarted = true;
+    }
 
-        music.play().then(() => {
-            music.volume = 0.4;
-            musicText.innerHTML = "🎵 Soft jazz playing";
-        }).catch(() => {
-            musicText.innerHTML = "🎵 Tap again if music doesn't start";
-        });
+    function toggleMusic() {
+        const music = document.getElementById("bgMusic");
+        if (music.paused) {
+            music.play();
+        } else {
+            music.pause();
+        }
     }
 </script>
 
